@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -44,20 +45,30 @@ public class ClimbService {
     public static void main(String[] args) throws IOException, InterruptedException, ParseException {
         ApplicationContext context = new ClassPathXmlApplicationContext("/spring/applicationcontext.xml");
         ClimbService climbService = (ClimbService) context.getBean("climbService");
-        climbService.climbTopic(Constants.DEEP_LEADNING_UNANSWER);
+        List<String> topicToCLimb = Arrays.asList(Constants.MACHINE_LEARNING_UNANSWER,
+                Constants.DEEP_LEADNING_UNANSWER, Constants.nlp, Constants.cv, Constants.voicere, Constants.ai, Constants.rfl);
+        for (String topic : topicToCLimb) {
+            climbService.climbTopic(topic);
+        }
+
     }
 
     public void climbTopic(String topicPath) throws IOException, InterruptedException, ParseException {
-        String baseUrl = Constants.ZHIUHU_URL + topicPath;
-        Document doc = Jsoup.connect(baseUrl).get();
-        Elements pagerElements = doc.select("div.border-pager div.zm-invite-pager  span");
-        int page = 1;
-        if (pagerElements.size() >= 3) {
-            page = parseInt(pagerElements.get(pagerElements.size() - 2).text());
+        try {
+            String baseUrl = Constants.ZHIUHU_URL + topicPath;
+            Document doc = Jsoup.connect(baseUrl).get();
+            Elements pagerElements = doc.select("div.border-pager div.zm-invite-pager  span");
+            int page = 1;
+            if (pagerElements.size() >= 3) {
+                page = parseInt(pagerElements.get(pagerElements.size() - 2).text());
+            }
+            for (int i = 1; i < page; i++) {
+                climbPageQuestions(topicPath + "?page=" + i);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        for (int i = 1; i < page; i++) {
-            climbPageQuestions(topicPath + "?page=" + i);
-        }
+
     }
 
 
@@ -65,22 +76,25 @@ public class ClimbService {
         String baseUrl = Constants.ZHIUHU_URL + path;
         Document doc = Jsoup.connect(baseUrl).get();
         Elements elements = doc.select("#zh-topic-questions-list .question-item");
-        for (Element element : elements) {
-            System.out.println(element.select("h2").text());
-            String questionUrl = element.select("h2 a").attr("href");
-            Question question = climbQuestion(questionUrl);
-            System.out.println(toJson(question));
-            questionMapper.insertQuestion(question);
-            Thread.sleep(1000);
-        }
+        if (elements != null)
+            for (Element element : elements) {
+                try {
+                    System.out.println(element.select("h2").text());
+                    String questionUrl = element.select("h2 a").attr("href");
+                    Question question = climbQuestion(questionUrl);
+                    System.out.println(toJson(question));
+                    questionMapper.insertQuestion(question);
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         return null;
     }
 
 
     public Question climbQuestion(String path) throws IOException, ParseException {
         try {
-
-
             Question question = new Question();
             int questionZhihuId = parseInt(path.replace("/question/", ""));
             String baseUrl = Constants.ZHIUHU_URL + path;
@@ -93,7 +107,7 @@ public class ClimbService {
             }
             String des = doc.select("div.QuestionHeader-detail").text();
             Elements elements1 = doc.select("div.NumberBoard-item strong");
-            int followNum = parseInt(elements1.get(0).text().replaceAll(",",""));
+            int followNum = parseInt(elements1.get(0).text().replaceAll(",", ""));
             int lookTime = parseInt(elements1.get(1).text().replaceAll(",", ""));
             question.setName(name);
             question.setDescription(des);
@@ -115,10 +129,10 @@ public class ClimbService {
         }
     }
 
-    private int parseInt(String num){
-        try{
+    private int parseInt(String num) {
+        try {
             return Integer.parseInt(num);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
