@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.larry.search.dao.ZhihuUserMapper">
+
+    <insert id="insertZhihuUser" parameterType="cn.larry.search.model.ZhihuUser">
+
+        insert into
+        zhihu_user(`zhihu_id`,`gander`,`type`,`name`,`description`,`follower_num`,`like_num`,`thank_num`,`anser_num`,`question_num`,`essay_num`,`education`,`job`,`industry`,`collection_num`,`create_time`,`update_time`,)
+        values
+        (#{zhihuId},#{gander},#{type},#{name},#{description},#{followerNum},#{likeNum},#{thankNum},#{answerNum},#{QuestionNum},#{essayNum},#{education},#{job},#{industry},#{collectionNum},#{createTime},#{updatezTime})
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.larry.search.dao.QuestionMapper">
+
+    <insert id="insertQuestion" parameterType="cn.larry.search.model.Question">
+        insert into
+        `question`(`id`, `name`,`description`,`questioner`,`raiseTime`,`answer_num`,`follow_num`,`tags`,`topic_id`,`look_time`,`create_time`,`update_time`)
+        values
+        (#{id},#{name},#{description},#{questioner},#{raiseTime},#{answerNum},#{followNum},#{tag},#{topicId},#{lookTime},#{createTime},#{updateTime})
+        on duplicate key update name=#{name},description=#{description},answer_num=#{answerNum},follow_num=#{followNum},tags=#{tag},
+        look_time=#{lookTime},update_time=#{updateTime}
+    </insert>
+
+
+</mapper>

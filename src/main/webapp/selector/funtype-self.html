@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel='stylesheet' type='text/css' href="css/selector.css">
+    <script type='text/javascript' src="js/jquery-1.11.2.min.js"></script>
+    <script type='text/javascript' src="js/funtype_data.js"></script>
+    <script type='text/javascript' src="js/industry_data.js"></script>
+    <script type='text/javascript' src="js/selector.js"></script>
+    <script>
+    $(function() {
+          var industrySelector1 = getIndustrySelector();
+          var funtypeSelector1 = getFuntypeSelector();
+        $("#show-category").click(function() {
+            //funtypeSelector1.show({divId:"selector-div",inputId:"category-input",single:false});
+            industrySelector1.show({divId:"selector-div",inputId:"category-input",single:true})
+        });
+    });
+
+
+    </script>
+</head>
+
+<body>
+    <button id="show-category">show</button>
+    <input type="text" id="category-input" />
+    <div id="selector-div" style="display:none;">
+    </div>
+</body>
+
+</html>

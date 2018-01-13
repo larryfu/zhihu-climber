@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.larry.search.dao.TopicMapper">
+
+    <insert id="insertTopic" parameterType="cn.larry.search.model.Topic">
+        insert into
+        topic(`id`,`father_id`,`name`,`follower_num`,`description`,`question_num`,`essence_num`,`create_time`,`update_time`)
+        values
+        (#{id},#{superId},#{name},#{followerNum},#{descriptiom},#{questionNum},#{essenceNum},#{createTime},#{updateTime})
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,56 @@
+body{
+    font-family:  "Microsoft YaHei",Arial;
+    font-size: 14px;
+    color: #788288;
+    background-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.8;
+}
+#main{
+    width:1100px;
+    margin:0 auto;
+    margin-top: 10px;
+}
+.text{
+    font-weight: normal;
+    margin-right: 10px;
+    color: #9a9a9a;
+    font-size: 13px;
+}
+.col {
+    display: inline;
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+.panel-title-spe{
+    display: inline-block;
+    position: absolute;
+}
+.clear{display: block;overflow: hidden}
+li{list-style-type:none;}
+.business{width: 100%;}
+.business tr{border-bottom: 1px solid transparent;  }
+.business tr th{color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;text-align: left;}
+.business tr td.td_1 a img{max-width: 70px;max-height: 70px;}
+.business tr td{background-color: #fff;padding-top: 0px;}
+.business tr td ul li{margin-left: 10px; margin-bottom: 5px;}
+.business tr td ul li.business_name {font-size: 18px;font-weight: 700;color: #000;}
+.business tr td ul li span.second{margin-left: 20px;}
+.business tr td a.type{display: block;border-radius: 4px;background-color: #ffac38;color: #fff;text-align: center;}
+.business .spe-span{margin-left: 20px;}
+.spe-ul{margin-left:-26px;margin-top:-22px}
+.spe-ul .second{margin-left: 22px;}
+.spe-ul .spe-span{margin-left: 20px;}
+.ul-nav{margin-bottom: 15px}
+.ul-nav li{cursor: pointer}
+.company-base{padding: 10px 0 10px 10px;display: block;}
+.company-base li{float: left; width: 50%; line-height: 18px;padding-bottom: 10px;color: #555; font-size: 15px;}
+.company-base label{color: #888; font-weight: normal; font-size: 13px;}
+.product-inf{margin-left: -42px;border: 0px}
+.btn-unselect{ padding: 5px 10px;  font-size: 12px;  line-height: 1.5;  border-radius: 3px;  color: #333;  background-color: #fff;  border: 1px solid #ccc;}
+.btn-unselect:hover{background-color: #f0ad4e;color: #fff;}
+.btn-selected{background-color: #f90; color: #fff;}

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>公司详情页面</title>
+    <meta charset="utf-8">
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="css/base.css" rel="stylesheet">
+    <link href="bower_components/bootstrap-datetimepicker/css/bootstrap-datepicker.css" rel="stylesheet">
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/handlebars-v4.0.5.js"></script>
+    <style>
+        .deal-status {
+            font-size: 12px;
+            margin-right: 300px;
+            float: right;
+        }
+
+        .company-base li {
+            padding-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="main">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <input type="text" id="search-key" class="form-control">
+                    <div class="input-group-btn">
+                        <button type="button" id="search-btn" class="btn btn-default">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body" id="com-base">
+            <!--<ul class="spe-ul">-->
+            <!--<li><h3>北京易动纷享科技有限责任公司</h3></li>-->
+            <!--<li><span class="glyphicon glyphicon-phone-alt"></span><span class="spe-span">51242540</span><span-->
+            <!--class="glyphicon glyphicon-envelope second"></span><span-->
+            <!--class="spe-span">947054596@qq.com</span></li>-->
+            <!--<li><span class="glyphicon glyphicon-map-marker"></span><span-->
+            <!--class="spe-span">北京市西城区北纬路九号205C室</span><span-->
+            <!--class="glyphicon glyphicon-signal second"></span><span class="spe-span"><a-->
+            <!--href="https://www.fxiaoke.com">https://www.fxiaoke.com</a></span></li>-->
+            <!--</ul>-->
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified ul-nav">
+        <li class="active topNav" data-id="companyBase"><a>基本信息</a></li>
+        <li class="topNav" data-id="company-description"><a>公司简介</a></li>
+        <li class="topNav" data-id="run-info"><a>经营状况</a></li>
+        <li class="topNav" data-id="status"><a>近期动态</a></li>
+    </ul>
+    <div id="companyBase" class="display-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    基本信息
+                </h3>
+            </div>
+            <div class="panel-body" id="com-info">
+                <!--<ul class="company-base">-->
+                <!--<li><label>统一社会信用代码： </label>91110102674290067J</li>-->
+                <!--<li><label>注册号： </label>110104010898137</li>-->
+                <!--<li><label>组织机构代码： </label>67429006-7</li>-->
+                <!--<li><label>经营状态： </label>在营（开业）企业</li>-->
+                <!--<li><label>公司类型： </label>有限责任公司(自然人投资或控股)</li>-->
+                <!--<li><label>成立日期： </label>2008-03-25</li>-->
+                <!--<li><label>法定代表： </label>罗旭</li>-->
+                <!--<li><label>注册资本： </label>1543.6662 万元 人民币</li>-->
+                <!--<li><label>营业期限： </label>2008-03-25 至 2038-03-24</li>-->
+                <!--<li><label>登记机关： </label>西城分局</li>-->
+                <!--<li><label>发照日期： </label>2016-01-25</li>-->
+                <!--<li><label>所属行业： </label>企业服务</li>-->
+                <!--</ul>-->
+            </div>
+        </div>
+    </div>
+
+    <div id="company-description" class="display-body" style="display: none;">
+    </div>
+
+    <div id="run-info" style="display: none" class="display-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    融资信息
+                </h3>
+            </div>
+            <div class="panel-body">
+                <!--<table class="table table-hover">-->
+                <!--<tbody>-->
+                <!--<tr>-->
+                <!--<td>2016-03-01</td>-->
+                <!--<td>E轮</td>-->
+                <!--<td>未透露</td>-->
+                <!--<td>中信产业基金</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<td>2016-03-01</td>-->
+                <!--<td>E轮</td>-->
+                <!--<td>未透露</td>-->
+                <!--<td>中信产业基金</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<td>2016-03-01</td>-->
+                <!--<td>E轮</td>-->
+                <!--<td>未透露</td>-->
+                <!--<td>中信产业基金</td>-->
+                <!--</tr>-->
+                <!--</tbody>-->
+                <!--</table>-->
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    产品信息
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>纷享逍客</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>网址：</label>-->
+                    <!--<label>领域：</label>-->
+                    <!--<label>企业服务</label>-->
+                    <!--<label>分类：</label>-->
+                    <!--<label>APP</label>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>纷享百川</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>网址：</label>-->
+                    <!--<label>领域：</label>-->
+                    <!--<label>企业服务</label>-->
+                    <!--<label>分类：</label>-->
+                    <!--<label>APP</label>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    招聘
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul id="com-jobinfo">
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>Web前端开发工程师</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>月薪：</label>-->
+                    <!--<label>面议</label>-->
+                    <!--<label>地点：</label>-->
+                    <!--<label>华润城</label>-->
+                    <!--<label>来源：</label>-->
+                    <!--<label>51job</label>-->
+                    <!--<span style="float: right">-->
+                    <!--<label>发布时间：  </label>2016-07-01-->
+                    <!--</span>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>Web前端开发工程师</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>月薪：</label>-->
+                    <!--<label>面议</label>-->
+                    <!--<label>地点：</label>-->
+                    <!--<label>华润城</label>-->
+                    <!--<label>来源：</label>-->
+                    <!--<label>51job</label>-->
+                    <!--<span style="float: right">-->
+                    <!--<label>发布时间：  </label>2016-07-01-->
+                    <!--</span>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="status" style="display: none" class="display-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    口碑
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul id="com-news">
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>喔趣考勤丨盘点那些估值过亿的企业级saas公司</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>来源：</label>-->
+                    <!--<label>新浪</label>-->
+                    <!--<span style="float: right">-->
+                    <!--<label>发布时间：  </label>2016-07-01-->
+                    <!--</span>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>喔趣考勤丨盘点那些估值过亿的企业级saas公司</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>来源：</label>-->
+                    <!--<label>新浪</label>-->
+                    <!--<span style="float: right">-->
+                    <!--<label>发布时间：  </label>2016-07-01-->
+                    <!--</span>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    对外投资
+                </h3>
+            </div>
+            <div class="panel-body">
+                <ul id="com-invest">
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>佛山市乐分享科技有限公司</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>法人：</label>-->
+                    <!--<label>XXX</label>-->
+                    <!--<label>成立时间：</label>-->
+                    <!--<label>2015-04-02</label>-->
+                    <!--<label>注册资本：</label>-->
+                    <!--<label>100万</label>-->
+                    <!--</small>-->
+                    <!--<small class="clear">-->
+                    <!--<label>地址：</label>-->
+                    <!--<label>佛山市禅城区</label>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<div class="list-group-item product-inf">-->
+                    <!--<span class="clear">-->
+                    <!--<span>佛山市乐分享科技有限公司</span>-->
+                    <!--<small class="clear">-->
+                    <!--<label>法人：</label>-->
+                    <!--<label>XXX</label>-->
+                    <!--<label>成立时间：</label>-->
+                    <!--<label>2015-04-02</label>-->
+                    <!--<label>注册资本：</label>-->
+                    <!--<label>100万</label>-->
+                    <!--</small>-->
+                    <!--<small class="clear">-->
+                    <!--<label>地址：</label>-->
+                    <!--<label>佛山市禅城区</label>-->
+                    <!--</small>-->
+                    <!--</span>-->
+                    <!--</div>-->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script id="company-base" type="text/x-handlebars-template">
+    <ul class="spe-ul">
+        <li><h3>{{company_name}}
+        </h3>
+        </li>
+        <li><span class="glyphicon glyphicon-phone-alt"></span><span class="spe-span">{{company_phone}}</span><span
+                class="glyphicon glyphicon-envelope second"></span><span
+                class="spe-span">{{company_email}}</span></li>
+        <li><span class="glyphicon glyphicon-map-marker"></span><span
+                class="spe-span">{{location}}</span><span
+                class="glyphicon glyphicon-signal second"></span><span class="spe-span"><a
+                href="{{company_website_url}}">{{company_website_url}}</a></span></li>
+    </ul>
+</script>
+
+<script id="company-info" type="text/x-handlebars-template">
+    <ul class="company-base">
+        <li><label>统一社会信用代码： </label>{{credit_code}}</li>
+        <li><label>注册号： </label>{{reg_code}}</li>
+        <li><label>组织机构代码： </label>{{company_code}}</li>
+        <li><label>经营状态： </label>{{status}}</li>
+        <li><label>公司类型： </label>{{company_type}}</li>
+        <li><label>成立日期： </label>{{found_date}}</li>
+        <li><label>法定代表： </label>{{representative}}</li>
+        <li><label>注册资本： </label>{{reg_capital}}</li>
+        <li><label>营业期限： </label>{{permitted_time}}</li>
+        <li><label>登记机关： </label>{{reg_department}}</li>
+        <li><label>发照日期： </label>{{auth_time}}</li>
+        <li><label>所属行业： </label>{{subcategory}}</li>
+    </ul>
+</script>
+
+<script id="company-desInfo" type="text/x-handlebars-template">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                公司简介
+            </h3>
+        </div>
+        <div class="panel-body">
+            <p>{{{company_intro}}}</p>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                经营范围
+            </h3>
+        </div>
+        <div class="panel-body">
+            <p>{{{description}}}</p>
+        </div>
+    </div>
+</script>
+
+<script id="company-jobinfo" type="text/x-handlebars-template">
+    <div class="list-group-item product-inf">
+        <span class="clear">
+            <span>{{title}}</span>
+            <small class="clear">
+                <label>月薪：</label>
+                <label>{{salary}}</label>
+                <label>地点：</label>
+                <label>{{location}}</label>
+                <label>来源：</label>
+                <label>{{source}}</label>
+                <span style="float: right">
+                    <label>发布时间：  </label>{{public_date}}
+                </span>
+            </small>
+        </span>
+    </div>
+</script>
+
+<script id="company-news" type="text/x-handlebars-template">
+    <div class="list-group-item product-inf">
+        <span class="clear">
+             <span>{{title}}</span>
+            <small class="clear">
+                <label>来源：</label>
+                <label>{{source}}</label>
+                <span style="float: right">
+                    <label>发布时间：  </label>{{public_date}}
+                </span>
+            </small>
+        </span>
+    </div>
+</script>
+
+<script id="company-invest" type="text/x-handlebars-template">
+    <div class="list-group-item product-inf">
+            <span class="clear">
+                <span>{{invest_name}}</span>
+                <small class="clear">
+                    <label>法人：</label>
+                    <label>{{representative}}</label>
+                    <label>成立时间：</label>
+                    <label>{{found_date}}</label>
+                    <label>注册资本：</label>
+                    <label>{{reg_capital}}</label>
+                </small>
+                <small class="clear">
+                    <label>地址：</label>
+                    <label>佛山市禅城区</label>
+                </small>
+            </span>
+    </div>
+</script>
+
+<script>
+
+    $(function () {
+        var id = location.hash.replace("#", "");
+        if (id != null) {
+            initData(id);
+        }
+
+        $("#search-btn").on("click", function () {
+            search();
+        });
+
+        function search() {
+            var key = $("#search-key").val();
+            if (key != null && key.trim() != "")
+                location.href = "/dealt-company#" + key + "$0";
+        }
+
+        $("body").on("keypress", function (e) {
+            if ("search-key" == document.activeElement.id && e.which == 13) {
+                search();
+            }
+        });
+
+    });
+
+    function initData(id) {
+        $.get("/dealt-company/detail/" + id, function (res) {
+            loadBase(res);
+            loadInfo(res);
+            loadJobs(res);
+            loadNews(res);
+            loadInvest(res);
+            loadDes(res);
+        });
+    }
+
+    function getDataFromTemplate(templateId, data) {
+        var source = $("#" + templateId).html();
+        var template = Handlebars.compile(source);
+        return template(data);
+    }
+
+    function loadDes(res) {
+        var html = getDataFromTemplate("company-desInfo", res);
+        $("#company-description").empty().html(html);
+    }
+
+    function loadBase(res) {
+        res.dealed = res.dealed ? "已成交" : "未成交";
+        var html = getDataFromTemplate("company-base", res);
+        $("#com-base").empty().html(html);
+    }
+
+    function loadInfo(res) {
+        var html = getDataFromTemplate("company-info", res);
+        $("#com-info").html(html);
+    }
+
+    function loadJobs(res) {
+        try {
+            var jobs = JSON.parse(res.joblist);
+            var jobArea = $("#com-jobinfo");
+            jobArea.empty();
+            for (var i in jobs) {
+                var html = getDataFromTemplate("company-jobinfo", jobs[i]);
+                jobArea.append($(html));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function loadNews(res) {
+        try {
+            var news = JSON.parse(res.newslist);
+            var newsArea = $("#com-news");
+            newsArea.empty();
+            for (var i in news) {
+                var html = getDataFromTemplate("company-news", news[i]);
+                newsArea.append($(html));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function loadInvest(res) {
+        try {
+            var invest = JSON.parse(res.invest);
+            var investArea = $("#com-invest");
+            for (var i in invest) {
+                var html = getDataFromTemplate("company-invest", invest[i]);
+                investArea.append($(html));
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
+    }
+
+    var isShow = function (id) {
+        $(".display-body").hide();
+        switch (id) {
+            case "companyBase":
+                $("#companyBase").show();
+                break;
+            case "company-description":
+                $("#company-description").show();
+                break;
+            case "run-info":
+                $("#run-info").show();
+                break;
+            case "status":
+                $("#status").show();
+                break;
+        }
+    };
+    $(".topNav").on("click", function () {
+        $(this).addClass("active");
+        $(".topNav").not(this).removeClass("active");
+        isShow($(this).data("id"))
+    });
+
+</script>
+</body>
+</html>

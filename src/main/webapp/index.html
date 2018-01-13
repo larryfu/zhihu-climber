@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>纷享企业用户画像检索</title>
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="selector/css/selector.css">
+    <link href="css/base.css" rel="stylesheet">
+    <link href="css/selectCity.css" rel="stylesheet">
+    <link href="bower_components/bootstrap-datetimepicker/css/bootstrap-datepicker.css" rel="stylesheet">
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/bootstrap-datetimepicker/js/bootstrap-datepicker.js"></script>
+    <script src="bower_components/bootstrap-datetimepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="js/city_arr.js"></script>
+    <script src="js/city_func.js"></script>
+    <script src="js/industry_arr.js"></script>
+    <script src="js/industry_func.js"></script>
+    <script src="selector/js/industry_data.js"></script>
+    <script src="selector/js/funtype_data.js"></script>
+    <script src="selector/js/selector.js"></script>
+    <script type="text/javascript" src="js/drag.js"></script>
+    <script type="text/javascript" src="js/handlebars-v4.0.5.js"></script>
+    <script type="text/javascript">
+        // 是否在数组内
+        function in_array(needle, haystack) {
+            if (typeof needle == 'string' || typeof needle == 'number') {
+                for (var i in haystack) {
+                    if (haystack[i] == needle) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    </script>
+
+    <style>
+
+        .descrition {
+            float: right;
+            margin-right: 20px;
+            margin-top: 20px;
+        }
+
+        .digest-text {
+            font-size: 10px;
+            margin-left: 20px;;
+        }
+
+        .business_name span {
+            display: inline-block;
+        }
+
+        .highlight {
+            background: yellow;
+        }
+
+        .business th {
+            padding-left: 10px;
+        }
+
+        #company-info td {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        #company-info tr {
+            border-bottom-color: rgb(229, 229, 229);
+            border-bottom-style: solid;
+            border-bottom-width: 1px;
+            border-collapse: collapse;
+            border-left-color: rgb(128, 128, 128);
+            border-right-color: rgb(128, 128, 128);
+            border-top-color: rgb(128, 128, 128);
+            box-sizing: border-box;
+            color: rgb(120, 130, 136);
+            display: table-row;
+            font-family: "Microsoft YaHei", Arial;
+            font-size: 13px;
+            line-height: 24px;
+            vertical-align: middle;
+            width: 868px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .business td {
+            padding-left: 10px;
+        }
+
+        .company-div {
+            padding: 0px;
+        }
+
+        .highcolor {
+            color: red;
+        }
+
+        .title {
+            font-size: 20px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #export {
+            float: right;
+            display: none;
+        }
+
+        .option-name {
+            display: inline-block;
+            width: 100px;
+        }
+
+        .input-text {
+            width: 100px;
+            margin-left: 20px;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+
+        #pay_apps, #pay-time {
+            display: none;
+        }
+
+        #paid-app-td {
+            max-width: 300px;
+        }
+    </style>
+    <script>
+
+        $(function () {
+            initListener();
+            initPage();
+        });
+
+        function initPage() {
+            var hash = location.hash;
+            if (hash != null) {
+                var word = hash.replace("#", "").split("$")[0];
+                if (word != null && word != "") {
+                    $("#keyword").val(word);
+                    searchCompany();
+                }
+            }
+        }
+
+        function initListener() {
+            var industrySelector = getIndustrySelector();
+            industrySelector.onHide(function () {
+                setTimeout(searchCompany, 10);
+            });
+            $("#btn_IndustryID").on("click", function () {
+                industrySelector.show({divId: "selector-area", inputId: "btn_IndustryID", single: true});
+            });
+
+            $("#search").on("click", function () {
+                resetStart();
+                searchCompany();
+            });
+            $("#scale button").on("click", function () {
+                $("#scale button").not(this).removeClass("btn-selected");
+                $(this).addClass("btn-selected");
+                setScaleValue($(this).attr("data-value"));
+                reloadData();
+            });
+
+            $("#active button").on('click', function () {
+                $("#active button").not(this).removeClass("btn-selected");
+                $(this).addClass("btn-selected");
+                reloadData();
+            });
+
+            $("#pay-time button").on('click', function () {
+                $("#pay-time button").not(this).removeClass("btn-selected");
+                $(this).addClass("btn-selected");
+                reloadData();
+            });
+
+            $("#pay_info button").on("click", function () {
+                $("#pay_info button").not(this).removeClass("btn-selected");
+                $(this).addClass("btn-selected");
+                if ($(this).text() == "付费") {
+                    $("#pay_apps").show();
+                    $("#all-apps").addClass("btn-selected");
+                    $("#pay-time").show();
+                } else {
+                    $("#pay_apps button").removeClass("btn-selected");
+                    $("#pay_apps").hide();
+                    $("#pay-time button").removeClass("btn-selected");
+                    $("#pay-time").hide();
+                }
+                searchCompany();
+            });
+
+            $("#pay_apps button").on("click", function () {
+                // $("#pay_apps button").not(this).removeClass("btn-selected");
+                // $(this).addClass("btn-selected");
+                $(this).toggleClass("btn-selected");
+                reloadData();
+            });
+
+            $(".search-arg").change(function () {
+                reloadData();
+            });
+
+            $("#btn_hukou").bind("input  propertychange", function () {
+                reloadData();
+            });
+            $("#pager").on("click", "li", function () {
+                setTimeout(searchCompany, 10);
+            });
+
+            $("body").on("keypress", function (e) {
+                if ("keyword" == document.activeElement.id && e.which == 13) {
+                    resetStart();
+                    searchCompany();
+                }
+            });
+
+            $("#export").on("click", function () {
+                $("#myModal").modal();
+            });
+
+            $("#export-confirm").on("click", function () {
+                exportData();
+            });
+
+            $("#scale-lower,#scale-upper").on("change", function () {
+                $("#scale button").removeClass("btn-selected");
+                reloadData();
+            });
+
+            $(".time-sort").on('click', function () {
+                var sortIcon = $(this).children("span");
+                if (sortIcon.hasClass("glyphicon-triangle-bottom")) {
+                    sortIcon.removeClass("glyphicon-triangle-bottom").addClass("glyphicon-triangle-top");
+                    $("#sort-type").val(1);
+                } else {
+                    $("#sort-type").val(2);
+                    sortIcon.removeClass("glyphicon-triangle-top").addClass("glyphicon-triangle-bottom");
+                }
+                searchCompany();
+            });
+
+            $(".sort-number").on('click', function () {
+                var numSort = $(this).children("span");
+                if (numSort.hasClass("glyphicon-triangle-bottom")) {
+                    numSort.removeClass("glyphicon-triangle-bottom").addClass("glyphicon-triangle-top");
+                    $("#sort-type").val(3);
+                } else {
+                    $("#sort-type").val(4);
+                    numSort.removeClass("glyphicon-triangle-top").addClass("glyphicon-triangle-bottom");
+                }
+                searchCompany();
+            });
+        }
+
+        function getApps() {
+            var apps = [];
+            $("#pay_apps button.btn-selected").each(function () {
+                if ($(this).text() != "不限")
+                    apps.push($(this).text());
+            });
+            return apps.join(" ");
+        }
+
+        function resetStart() {
+            try {
+                var hash = location.hash;
+                key = hash.replace("#", "").split("$")[0];
+                location.hash = key + "$" + 0;
+            } catch (e) {
+            }
+        }
+
+        function setScaleValue(value) {
+            var scaleMap = {
+                "0": {},
+                "1": {
+                    "scaleLower": 2,
+                    "scaleUpper": 20
+                },
+                "2": {
+                    "scaleLower": 21,
+                    "scaleUpper": 50
+                },
+                "3": {
+                    "scaleLower": 51,
+                    "scaleUpper": 100
+                },
+                "4": {
+                    "scaleLower": 101,
+                    "scaleUpper": 10000000
+                }
+            };
+
+            var scale = scaleMap[value];
+            if (scale == null)return;
+            var lower = scale.scaleLower || "";
+            var upper = scale.scaleUpper || "";
+            $("#scale-lower").val(lower);
+            $("#scale-upper").val(upper);
+        }
+
+        function exportData() {
+            var eles = [];
+            $(".checkbox-inlines input[type=checkbox]").each(function () {
+                if ($(this)[0].checked == true) {
+                    eles.push($(this).val())
+                }
+            });
+            var arg = getArg();
+            var number = $("#export-number").val();
+            if (number) {
+                if (number == "all")
+                    number = -1;
+                arg.lines = number;
+            }
+            var encode = $("#export-encode").val();
+            arg.encode = encode;
+            var href = "/dealt-company/export?fields=" + eles.join("|");
+            for (var a in arg) {
+                href += "&" + a + "=" + arg[a];
+            }
+            location.href = href;
+        }
+
+        function reloadData() {
+            resetStart();
+            searchCompany();
+        }
+
+        function getArg() {
+            var arg = {};
+            var scaleLower = $("#scale-lower").val();
+            var scaleUpper = $("#scale-upper").val();
+
+            if (!isNaN(scaleLower) && scaleLower > 0)
+                arg.scaleLower = scaleLower;
+            if (!isNaN(scaleUpper) && scaleUpper > 0)
+                arg.scaleUpper = scaleUpper;
+
+
+            var pay = $("#pay_info button.btn-selected").attr("data-value");
+            if (pay == 1) {
+               // var app = $("#pay_apps button.btn-selected").text();
+                arg.pay = 1;
+//                if (app != "不限")
+//                    arg.app = app;
+                arg.app = getApps();
+            } else if (pay == 2) {
+                arg.pay = 2;
+            }
+
+            var paidMonth = $("#pay-time button.btn-selected").attr("data-value");
+            if (paidMonth != null)
+                arg.paidMonth = paidMonth;
+
+            var active = $("#active button.btn-selected").attr("data-value");
+            var sort = $("#sort-type").val();
+            if (sort != null)
+                arg.sort = sort;
+
+            if (active != null)
+                arg.active = active;
+
+            var regStart = $("#startDate").val();
+            var regEnd = $("#endDate").val();
+
+            if (isNotBlank(regStart))
+                arg["regStart"] = regStart;
+            if (isNotBlank(regEnd))
+                arg["regEnd"] = regEnd;
+
+            var city = $("#btn_hukou").val();
+            if (isNotBlank(city) && city != "请选择地区" && city != "不限")
+                arg["city"] = city;
+
+            var industry = $("#btn_IndustryID").val();
+            if (isNotBlank(industry) && industry != "请选择行业" && industry != "不限")
+                arg["industry"] = industry;
+
+            var hash = location.hash;
+            var start = 0;
+
+            if (isNotBlank(hash)) {
+                hash = hash.replace("#", "");
+                var arr = hash.split("$");
+                start = arr[1] != null ? arr[1] : 0;
+            }
+
+            var key = $("#keyword").val();
+            arg["start"] = start;
+            arg["rows"] = 10;
+            arg["keyword"] = key;
+            location.hash = key + "$" + start;
+            return arg;
+        }
+
+        function isNotBlank(item) {
+            return (typeof item === "string") && item != null && item.trim() != "";
+        }
+
+        function searchCompany() {
+            var arg = getArg();
+            getData(arg, function (res) {
+                initPager(res.pager);
+                loadData(res.data, res.words);
+            });
+        }
+
+        function formatDate(dateNum) {
+            var date = new Date(dateNum);
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            return year + "-" + month + "-" + day;
+        }
+
+        function getData(arg, callBack) {
+            $.post("/dealt-company/query", arg, callBack);
+        }
+
+        function initPager(pager) {
+            var keyword = pager.keyword;
+            var total = pager.total;
+            var start = pager.start;
+            var rows = pager.rows;
+            if (rows <= 0)
+                rows = 10;
+            var current = start / rows + 1;
+            var totalPage = Math.ceil(total / rows);
+            var range = start + "-" + Math.min(start + 10, total);
+            var info = "共找到<span class='highcolor'>" + total + "</span>家相关公司，当前显示第<span class='highcolor'>" + range + "</span>项";
+            $("#result-info").html(info);
+
+            var map = [];
+            for (var i = 1; i <= Math.min(totalPage, 3); i++)
+                map[i] = generatePagerItem(i, keyword, rows, current);
+
+            var start = Math.max(1, current - 2);
+
+            if (start != 0 && map[start - 1] == null)
+                map.push("<li ><a>...</a></li>");
+
+            for (var index1 = start; index1 < Math.min(totalPage, current + 3); index1++) {
+                map[index1] = generatePagerItem(index1, keyword, rows, current);
+            }
+            var start = Math.max(1, totalPage - 2);
+            if (start != 0 && map[start - 1] == null)
+                map.push("<li ><a>...</a></li>");
+
+            for (var j = start; j <= totalPage; j++)
+                map[j] = generatePagerItem(j, keyword, rows, current);
+
+            $("#pager").empty();
+            for (var i in map)
+                $("#pager").append($(map[i]));
+        }
+
+        function generatePagerItem(index, keyword, rows, current) {
+            var hash = keyword + "$" + ((index - 1) * rows);
+            var html = "/dealt-company/#" + hash;
+            html = "<li ><a href='" + html + "'>" + index + "</li>";
+            if (index == current) {
+                html = "<li class='active'><a href='/dealt-company/#" + hash + "'>" + index + "</li>";
+            }
+            return html;
+        }
+
+        function loadData(coms, words) {
+            $("#company-info").empty();
+            $("#export").show();
+            for (var i in coms) {
+                var com = coms[i];
+                com['registerTime'] = formatDate(com['registerTime']);
+                com.digest = highLight(com.digest, words);
+                com.name = highLight(com.name, words);
+                if (com.activeIn1Mon) {
+                    com.active = "一个月内活跃";
+                } else if (com.activeIn2Mon) {
+                    com.active = "两个月内活跃";
+                } else if (com.activeIn3Mon) {
+                    com.active = "三个月内活跃";
+                } else {
+                    com.active = "不活跃";
+                }
+                if (com.paidApps == null)
+                    com.paidApps = "无";
+                // com.active = com.active ? "活跃" : "非活跃";
+                if (com.scaleUpper == 0)
+                    com.scaleExist = false;
+                else com.scaleExist = true;
+                var source = $("#company-template").html();
+                var template = Handlebars.compile(source);
+                var html = template(com);
+                $("#company-info").append($(html));
+            }
+        }
+
+        function highLight(text, words) {
+            for (var w in words) {
+                text = text.replace(new RegExp(words[w], 'gm'), "<span class='highlight'>" + words[w] + "</span>");
+                text = text.replace(/null/g, "");
+            }
+            return text;
+        }
+    </script>
+</head>
+<body>
+
+<div id="main">
+    <div class="title">
+        <h2>纷享企业用户画像检索</h2>
+    </div>
+    <div class="descrition"><span>数据更新于7月30日</span></div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-6" style="text-align: center">
+                <div class="input-group">
+                    <input type="text" id="keyword" class="form-control">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default" id="search">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                筛选条件
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group" id="scale">
+                <label class="col-sm-1 text">使用人数</label>
+                <div class="col">
+                    <button type="button" data-value="0" class="btn-unselect">不限</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="1" class="btn-unselect ">2~20人</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="2" class="btn-unselect">21~50人</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="3" class="btn-unselect">51-100人</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="4" class="btn-unselect">100人以上</button>
+                </div>
+                <div class="col">
+                    <input type="text" class="input-text" placeholder="人数下限" id="scale-lower"/>
+                    <input type="text" class="input-text" placeholder="人数上限" id="scale-upper"/>
+                </div>
+            </div>
+
+            <div class="form-group" id="active">
+                <label class="col-sm-1 text">是否活跃</label>
+                <div class="col">
+                    <button type="button" data-value="0" class="btn-unselect">不限</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="1" class="btn-unselect">一个月内活跃</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="2" class="btn-unselect">两个月内活跃</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="3" class="btn-unselect">三个月内活跃</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="4" class="btn-unselect">不活跃</button>
+                </div>
+            </div>
+
+            <div class="form-group" id="pay_info">
+                <label class="col-sm-1 text">付费状况</label>
+                <div class="col">
+                    <button type="button" data-value="0" class="btn-unselect">不限</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="1" class="btn-unselect">付费</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="2" class="btn-unselect">非付费</button>
+                </div>
+            </div>
+
+            <div class="form-group" id="pay-time">
+                <label class="col-sm-1 text">付费时间</label>
+                <div class="col">
+                    <button type="button" data-value="0" class="btn-unselect">不限</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="1" class="btn-unselect">一个月内付费</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="2" class="btn-unselect">两个月内付费</button>
+                </div>
+                <div class="col">
+                    <button type="button" data-value="3" class="btn-unselect">三个月内付费</button>
+                </div>
+            </div>
+
+            <div class="form-group" id="pay_apps">
+                <label class="col-sm-1 text">付费应用</label>
+                <div class="col">
+                    <button type="button" id="all-apps" class="btn-unselect">不限</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">CRM</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">培训费</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">PK助手</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">工资助手</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">助手套餐</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">会议助手</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">使用名片</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">报数系统</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">纷享百川</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">自定义助手</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">战报助手</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">项目管理</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">培训助手</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">培训助手课时</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn-unselect">空间</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-1 text">注册时间</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control form_datetime search-arg" id="startDate" name="startDate"
+                           placeholder="开始时间">
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control form_datetime search-arg" id="endDate" name="endDate"
+                           placeholder="结束时间">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 62px">
+                <label class="col-sm-1 text">省份地区</label>
+                <div class="col-sm-3">
+                    <input class="form-control search-arg" id="btn_hukou" type="button" value="请选择地区"
+                           onclick="hukouSelect()"/>
+                    <input class="form-control" id="jobAreaID" type="hidden" name="jobAreaID" value=""/>
+                </div>
+            </div>
+            <input type="text" id="sort-type" style="display: none"/>
+            <div class="form-group" style="margin-top: 110px">
+                <label class="col-sm-1 text">行业</label>
+                <div class="col-sm-3">
+                    <input class="form-control search-arg" id="btn_IndustryID" type="button" value="请选择行业"/>
+                    <input class="form-control" id="IndustryID" type="hidden" name="IndustryID" value=""/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <span id="result-info"></span>
+            <button class="btn btn-default" id="export">导出csv</button>
+        </div>
+
+        <div class="panel-body company-div">
+            <table class="business">
+                <thead>
+                <tr style="background-color: #f9fafc;">
+                    <th class="text-center">公司</th>
+                    <th class="text-center">付费应用</th>
+                    <th class="text-center sort-number">使用人数 <span class="glyphicon glyphicon-triangle-bottom"
+                                                                   aria-hidden="true"></span></th>
+                    <th class="text-center time-sort">注册时间 <span class="glyphicon glyphicon-triangle-bottom"
+                                                                 aria-hidden="true"></span></th>
+                    <th class="text-center">是否活跃</th>
+                </tr>
+                </thead>
+                <tbody id="company-info">
+                <!--<tr>-->
+                <!--<td>-->
+                <!--<ul>-->
+                <!--<li class="business_name"><span>北京易动纷享科技有限责任公司</span></li>-->
+                <!--<li><span>罗旭</span><span class="second">企业法人</span></li>-->
+                <!--<li><span class="glyphicon glyphicon-phone-alt"></span><span-->
+                <!--class="spe-span">51242540</span><span-->
+                <!--class="glyphicon glyphicon-envelope second"></span><span class="spe-span">947054596@qq.com</span>-->
+                <!--</li>-->
+                <!--<li><span class="glyphicon glyphicon-map-marker"></span>北京市西城区北纬路九号205C室</li>-->
+                <!--</ul>-->
+                <!--</td>-->
+                <!--<td>-->
+                <!--<span>1543.6662</span><span>万元</span>-->
+                <!--</td>-->
+                <!--<td><span>2008-03-25</span></td>-->
+                <!--</tr>-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <ul class="pagination" id="pager">
+    </ul>
+
+    <div>
+        <p>用户画像字段说明：</p>
+        <ol>
+            <li>
+                <span>1.是否活跃: 企业在n个月内活跃是指该企业在n个月内至少有一天活跃。</span>
+            </li>
+            <li>
+                <span>2. 使用人数: 数据统计当日此企业的活跃用户数。</span>
+            </li>
+            <li>
+                <span>3. 行业: 行业由算法计算得出，存在一定的误差。</span>
+            </li>
+            <li>
+                <span>4. 付费时间：指企业在选定的时间段内，付费应用仍在有效期。如：一个月内付费，指一个月的范围内，付费应用仍然在有效期的企业。</span>
+            </li>
+        </ol>
+        <br>
+    </div>
+
+</div>
+<div id="maskLayer" style="display:none">
+    <iframe id="maskLayer_iframe" frameBorder=0 scrolling=no style="filter:alpha(opacity=50)"></iframe>
+    <div id="alphadiv" style="filter:alpha(opacity=50);-moz-opacity:0.5;opacity:0.5"></div>
+    <div id="drag">
+        <h3 id="drag_h"></h3>
+        <div id="drag_con"></div><!-- drag_con end -->
+    </div>
+</div>
+
+</div>
+
+<div id="selector-area"></div>
+<div id="sublist" style="display:none"></div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    导出企业数据
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form action="/dealt-company/export" method="post" id="export-form">
+                    <p>需要导出的字段</p>
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox3" value="name" checked="checked" disabled="disabled"/> <span
+                            class="option-name">公司名称</span>
+                    </label>
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox1" value="id"/> <span
+                            class="option-name">ei</span>
+                    </label>
+
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox2" value="ea"/> <span
+                            class="option-name">ea</span>
+                    </label>
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox4" value="employeeNumber"/> <span
+                            class="option-name">员工数</span>
+                    </label>
+                    <br/>
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox5" value="city"/> <span
+                            class="option-name">地区</span>
+                    </label>
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox6" value="industry"/> <span
+                            class="option-name">行业</span>
+                    </label>
+                    <label class="checkbox-inlines">
+                        <input type="checkbox" id="inlineCheckbox7" value="registerTime"/> <span
+                            class="option-name">注册时间</span>
+                    </label>
+                    <p>导出条数</p>
+                    <select name="export-number" id="export-number">
+                        <option value=""></option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                        <option value="all">全部</option>
+                    </select>
+                    <p>文件编码</p>
+                    <select name="export-number" id="export-encode">
+                        <option value="GBK">GBK</option>
+                        <option value="UTF-8">UTF-8</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="export-confirm"
+                        data-dismiss="modal">确认
+                </button>
+                <button type="button" class="btn btn-primary">
+                    关闭
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+    <script type="text/javascript">
+        $(".form_datetime").datepicker({
+            format: "yyyy-mm-dd",
+            autoclose: true,
+            todayBtn: true,
+            language: "zh-CN"
+
+        });
+    </script>
+
+    <script id="company-template" type="text/x-handlebars-template">
+        <tr>
+            <td>
+                <ul>
+                    <li class="business_name"><a href="/dealt-company/detail.html#{{pid}}"
+                                                 target="_blank">{{{name}}}</a></li>
+                    <li><span>ei:</span>&nbsp;<span>{{id}}</span><span
+                            class="second">ea:</span>&nbsp;<span>{{ea}}</span>
+                    </li>
+                    <li>
+                        <span>城市:</span>
+                        <span>{{city}}</span>
+                        {{#if industry}}
+                        <span class="spe-span">行业:&nbsp;{{industry}}</span>
+                        {{/if}}
+                    </li>
+                    <li>
+                        <div class="digest-text">{{{digest}}}</div>
+                    </li>
+                </ul>
+            </td>
+            <td id="paid-app-td"><span>{{paidApps}}</span></td>
+            <td>{{employeeNumber}}</td>
+            <td><span>{{registerTime}}</span></td>
+            <td><span>{{active}}</span></td>
+        </tr>
+    </script>
+</div>
+</body>
+</html>
