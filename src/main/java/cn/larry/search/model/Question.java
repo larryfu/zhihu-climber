@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class Question {
 
+
+    private String url;
     int id;
     String name;
     String description;
@@ -111,5 +113,13 @@ public class Question {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

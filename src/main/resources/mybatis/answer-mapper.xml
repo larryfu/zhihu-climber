@@ -6,11 +6,12 @@
 
     <insert id="insertAnswer" parameterType="cn.larry.search.model.Answer">
         insert into
-        answer(`question_id`,`author_id`,`like_num`,`thanks_num`,`comment_num`,`length`,`answer_time`,`type`,`content`,`create_time`,`update_time`)
+        answer(`id`,`question_id`,`author_id`,`like_num`,`thanks_num`,`comment_num`,`length`,`answer_time`,`type`,`content`,`create_time`,`update_time`,`url`)
         values
-        (#{questionId},#{authorid},#{likeNum},#{thanksNum},#{commentNum},#{length},#{answerTime},#{type},#{content},#{createTime},#{updateTime})
+        (#{id},#{questionId},#{authorid},#{likeNum},#{thanksNum},#{commentNum},#{length},#{answerTime},#{type},#{content},#{createTime},#{updateTime},#{url})
         on duplicate key update
-        like_num = #{likeNum},thanks_num = #{thanksNum},comment_num=#{commentNum},length=#{length},answer_time=#{answerTime},update_time=#{updateTime},content=#{content}
+        id=#{id},like_num = #{likeNum},thanks_num = #{thanksNum},comment_num=#{commentNum},length=#{length},
+        answer_time=#{answerTime},update_time=#{updateTime},content=#{content},url=#{url}
     </insert>
 
 

@@ -6,11 +6,11 @@
 
     <insert id="insertQuestion" parameterType="cn.larry.search.model.Question">
         insert into
-        `question`(`id`, `name`,`description`,`questioner`,`raiseTime`,`answer_num`,`follow_num`,`tags`,`topic_id`,`look_time`,`create_time`,`update_time`)
+        `question`(`id`, `name`,`description`,`questioner`,`raiseTime`,`answer_num`,`follow_num`,`tags`,`topic_id`,`look_time`,`create_time`,`update_time`,`url`)
         values
-        (#{id},#{name},#{description},#{questioner},#{raiseTime},#{answerNum},#{followNum},#{tag},#{topicId},#{lookTime},#{createTime},#{updateTime})
+        (#{id},#{name},#{description},#{questioner},#{raiseTime},#{answerNum},#{followNum},#{tag},#{topicId},#{lookTime},#{createTime},#{updateTime},#{url})
         on duplicate key update name=#{name},description=#{description},answer_num=#{answerNum},follow_num=#{followNum},tags=#{tag},
-        look_time=#{lookTime},update_time=#{updateTime}
+        look_time=#{lookTime},update_time=#{updateTime},url=#{url}
     </insert>
 
 

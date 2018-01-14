@@ -10,6 +10,8 @@ import cn.larry.search.util.RandomString;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,11 +28,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
 public class ClimbService {
+
+    private static final Logger logger = LogManager.getLogger();
 
     @Resource
     AnswerMapper answerMapper;
@@ -66,7 +72,7 @@ public class ClimbService {
                 climbPageQuestions(topicPath + "?page=" + i);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
 
     }
@@ -79,10 +85,10 @@ public class ClimbService {
         if (elements != null)
             for (Element element : elements) {
                 try {
-                    System.out.println(element.select("h2").text());
+
                     String questionUrl = element.select("h2 a").attr("href");
                     Question question = climbQuestion(questionUrl);
-                    System.out.println(toJson(question));
+                    logger.debug(toJson(question));
                     questionMapper.insertQuestion(question);
                     Thread.sleep(1000);
                 } catch (Exception e) {
@@ -98,6 +104,7 @@ public class ClimbService {
             Question question = new Question();
             int questionZhihuId = parseInt(path.replace("/question/", ""));
             String baseUrl = Constants.ZHIUHU_URL + path;
+            question.setUrl(baseUrl);
             Document doc = Jsoup.connect(baseUrl).get();
             String name = doc.select("h1.QuestionHeader-title").text();
             List<String> tags = new ArrayList<>();
@@ -116,7 +123,7 @@ public class ClimbService {
             question.setTag(String.join("-", tags));
             question.setCreateTime(new Date());
             question.setId(questionZhihuId);
-            System.out.println("question: " + name);
+            logger.debug("question: " + name);
             Elements answers = doc.select("div#QuestionAnswers-answers div.list-item");
             for (Element element : answers) {
                 Answer answer = parseAnswer(element, questionZhihuId);
@@ -124,7 +131,7 @@ public class ClimbService {
             }
             return question;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
             return null;
         }
     }
@@ -133,7 +140,7 @@ public class ClimbService {
         try {
             return Integer.parseInt(num);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
             return 0;
         }
     }
@@ -161,20 +168,36 @@ public class ClimbService {
             }
             answer.setAuthorid(zhihu_id);
 
+            String answerUrl = answerElement.selectFirst("link").attr("href");
+            if (answerUrl != null) {
+                String[] strings = answerUrl.split("/");
+                long answerId = 0;
+                try {
+                    answerId = Long.parseLong(strings[strings.length - 1]);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+                answer.setId(answerId);
+                answer.setUrl(Constants.ZHIUHU_URL + answerUrl);
+            }
+
             String num = answerElement.selectFirst("div.ContentItem-actions button.VoteButton--up").text();
             int likeNum = parseInt(num.trim());
             String content = answerElement.select("div.RichContent div.RichContent-inner").text();
             String time = answerElement.select("div.RichContent div.ContentItem-time").text().replace("编辑于", "");
             time = regularGetString(time, "\\d{4}-\\d{1,2}-\\d{1,2}");
             Date answerTime = parseDate(time, "yyyy-MM-dd");
-            System.out.println("answer :" + content);
+
+            logger.debug("answer :" + content);
             answer.setAnswerTime(answerTime);
-            String commentNumStr = answerElement.selectFirst("div.ContentItem-actions>button.ContentItem-action").text().replace("条评论", "").trim();
+            String commentNumStr = answerElement.selectFirst("div.ContentItem-actions>button.ContentItem-action").text();
+            if (commentNumStr != null) commentNumStr = commentNumStr.replace("条评论", "").trim();
             int commentNum = 0;
-            try {
-                commentNum = parseInt(commentNumStr);
-            } catch (Exception e) {
-            }
+            if (commentNumStr != null && !"添加评论".equals(commentNumStr.trim()))
+                try {
+                    commentNum = parseInt(commentNumStr);
+                } catch (Exception e) {
+                }
             answer.setAnswerTime(answerTime);
             answer.setCreateTime(new Date());
             answer.setCommentNum(commentNum);
@@ -183,7 +206,7 @@ public class ClimbService {
             answer.setUpdateTime(new Date());
             answer.setContent(content);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
         return answer;
     }
@@ -193,7 +216,7 @@ public class ClimbService {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
             return simpleDateFormat.parse(strDate);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
             return null;
         }
 
